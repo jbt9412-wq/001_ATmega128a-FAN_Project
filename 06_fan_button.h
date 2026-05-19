@@ -3,7 +3,7 @@
 
 #include "01_fan_config.h"
 
-// 메인 루프에서 버튼 상태를 감시할 함수
+/* GPIO 버튼 입력 및 디바운싱 모듈 API */
 void button_process(void);
 
 #endif /* FAN_BUTTON_H_ */

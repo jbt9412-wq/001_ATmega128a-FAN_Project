@@ -1,41 +1,47 @@
-#include "01_fan_config.h" // 핀 설정, 상수 정의
-#include "02_fan_register.h" // 레지스터 초기화 함수 선언
-#include "03_fan_uart.h"     // UART 통신 관련 함수 선언
-#include "04_fan_LED_FND.h"  // FND, LED 제어 관련 함수 선언
-#include "05_fan_motor.h"    // 모터 제어 관련 함수 선언
-#include "06_fan_button.h"   // 버튼 입력 처리 관련 함수 선언
+#include "01_fan_config.h"
+#include "02_fan_register.h"
+#include "03_fan_uart.h"     
+#include "04_fan_LED_FND.h"  
+#include "05_fan_motor.h"    
+#include "06_fan_button.h"   
 
-// [시스템에서 제어할 3가지 상태]
-volatile uint8_t is_running = 1;   // 시스템 전체의 ON/OFF 상태 (0: OFF, 1: ON)      
-volatile uint8_t speed_state = 0;  // 풍속 상태 (0: 정지, 1: 저속, 2: 중속, 3: 고속) - 버튼 입력에 따라 변경
-volatile uint8_t rotate_state = 0;  // 회전 방향 상태 (0: 시계방향, 1: 반시계방향) - UART 명령에 따라 변경
+/* 시스템 전역 상태 변수 정의 */
+volatile uint8_t is_running = 1;    // 시스템 동작 전원 플래그 (0: OFF, 1: ON)      
+volatile uint8_t speed_state = 0;   // DC 모터 풍속 단계 플래그 (0 ~ 3단)
+volatile uint8_t rotate_state = 0;  // 서보모터 스윙 모드 플래그 (0: OFF, 1: ON)
 
 int main(void)
 {
-    // 1. 초기화 구역태
-    register_init();  // 레지스터 초기화 (핀 모드 설정, 인터럽트 설정 등)
-    comm_init();      // UART 통신 초기화
-    motor_init();     // 모터 초기화 (PWM 설정 등)
-    visual_init();    // 시각 출력 초기화 (FND, LED 핀 설정 및 타이머0 초기화)
+    /* 하드웨어 및 주변장치 초기화 시퀀스 */
+    register_init();  // 기본 GPIO 입출력 방향 및 풀업 설정
+    comm_init();      // UART0 및 외부 인터럽트(INT4), 타이머3 설정
+    motor_init();     // 타이머1 기반 하드웨어 PWM 설정 (서보/DC 모터)
+    visual_init();    // FND/LED 제어용 타이머0 소프트웨어 PWM 설정
 
-    sei();  // 전역 인터럽트 허용
-    uart0_print("\r\n=== Fan Project Boot: Ultimate Diet ===\r\n"); // 부팅 메시지 출력
+    sei();            // 전역 인터럽트 활성화 (Global Interrupt Enable)
+    
+    uart0_print("\r\n[SYSTEM] ATmega128A Fan Project Boot Complete\r\n");
 
 
+    /* 메인 폴링 루프 스케줄러 */
     while(1)
     {
-        // --- [STEP 1] 입력 감시 ---
-        comm_process();    // UART 명령 처리 (회전 방향 변경 등)
-        button_process();  // 버튼 입력 처리 (풍속 상태 변경)
+        /* 1. 입력 태스크 스캔 (통신 및 GPIO 포트 폴링) */
+        comm_process();    // IR 리모컨 수신 데이터 및 UART 커맨드 파싱
+        button_process();  // 물리 버튼 입력 디바운싱 및 상태 천이 처리
 
-        // --- [STEP 2] 모터 제어 ---
-        set_fan_speed(speed_state); // 현재 풍속 상태
+        /* 2. 하드웨어 출력 및 제어 태스크 */
+        set_fan_speed(speed_state); // 현재 속도 단계 기준 DC 모터 PWM 업데이트
         
-        // --- [STEP 3] 시각 출력  ---
-        display_speed(speed_state); // FND에 현재 풍속 표시              
-        update_led_sweep(update_motor_rotation()); // 모터 회전 상태에 따른 LED 잔상 업데이트
+        /* 3. 디스플레이 및 시각 피드백 태스크 */
+        display_speed(speed_state); // 현재 속도 단계 FND 출력
+        
+        // 서보모터 스윙 위치 연산 및 연동 LED 잔상 알고리즘 업데이트
+        update_led_sweep(update_motor_rotation()); 
 
-        _delay_ms(15); // 시스템 안정화를 위한 딜레이 (15ms)
+        /* 시스템 안정화 및 루프 주기 제어 지연 */
+        _delay_ms(15); 
     }
+    
     return 0;
 }

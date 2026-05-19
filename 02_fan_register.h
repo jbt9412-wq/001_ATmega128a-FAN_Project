@@ -3,7 +3,7 @@
 
 #include "01_fan_config.h"
 
-// 핀 방향 및 풀업 저항 설정을 총괄하는 초기화 함수
+/* 하드웨어 입출력 및 핀 초기화 */
 void register_init(void);
 
 #endif /* FAN_REGISTER_H_ */
