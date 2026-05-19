@@ -20,14 +20,14 @@
 ---
 
 ## 🧩 소프트웨어 아키텍처 (Software Architecture)
-기능별로 로직 레이어를 분리하여 코드 유지보수성과 확장성을 높였습니다.
+기능별로 로직 레이어를 철저히 분리하여 코드의 유지보수성과 가독성을 극대화했습니다.
 
-
-📁 001_ATmega128a-FAN_Project
- ┣ 📜 main.c              # 메인 폴링 루프 스케줄러 및 태스크 관리
- ┣ 📜 01_fan_config.h     # 전역 상태 플래그 및 공통 라이브러리 정의
- ┣ 📜 02_fan_register.c/h # 기본 GPIO 입출력 방향 및 내부 풀업 설정
- ┣ 📜 03_fan_uart.c/h     # NEC IR 프로토콜 디코딩 및 UART0 통신 제어
- ┣ 📜 04_fan_LED_FND.c/h  # FND 출력 및 Timer0 오버플로우 기반 8채널 SW PWM 제어
- ┣ 📜 05_fan_motor.c/h    # Timer1 하드웨어 PWM 기반 서보/DC 모터 제어
- ┗ 📜 06_fan_button.c/h   # GPIO 폴링 기반 버튼 입력 및 소프트웨어 디바운싱
+```text
+001_ATmega128a-FAN_Project/
+├── main.c                 # 메인 폴링 루프 스케줄러 (전체 태스크 관리)
+├── 01_fan_config.h        # 전역 상태 플래그 및 공통 라이브러리 정의
+├── 02_fan_register.c/.h   # 기본 GPIO 입출력 방향 및 내부 풀업 설정
+├── 03_fan_uart.c/.h       # NEC IR 프로토콜 디코딩 및 UART0 통신 제어
+├── 04_fan_LED_FND.c/.h    # FND 출력 및 8채널 소프트웨어 PWM 제어
+├── 05_fan_motor.c/.h      # 타이머1 하드웨어 PWM 기반 서보/DC 모터 제어
+└── 06_fan_button.c/.h     # GPIO 폴링 기반 버튼 입력 및 디바운싱
