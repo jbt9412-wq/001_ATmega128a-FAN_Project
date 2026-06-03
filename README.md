@@ -12,14 +12,14 @@
 
 ---
 
-## 🛠️ 사용 기술 및 장치 (Tech Stack)
+##  사용 기술 및 장치 (Tech Stack)
 - **Language:** C (AVR-GCC)
 - **Peripherals:** Timer/Counter(0 & 1 & 3), External Interrupt (INT4), UART0
 - **Hardware:** DC Motor (Fan), Servo Motor (Swing), NEC IR Receiver, FND Display, LED Bar(8ch)
 
 ---
 
-## 🧩 소프트웨어 아키텍처 (Software Architecture)
+##  소프트웨어 아키텍처 (Software Architecture)
 기능별로 로직 레이어를 분리하여 코드의 유지보수성과 추후 확장성을 대비
 
 ```text
