@@ -22,7 +22,7 @@
 ##  소프트웨어 아키텍처 (Software Architecture)
 기능별로 로직 레이어를 분리하여 코드의 유지보수성과 추후 확장성을 대비
 
-```text
+
 001_ATmega128a-FAN_Project/
 ├── main.c                 # 메인 폴링 루프 스케줄러 (전체 태스크 관리)
 ├── 01_fan_config.h        # 전역 상태 플래그 및 공통 라이브러리 정의
